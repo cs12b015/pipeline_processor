@@ -1,4 +1,4 @@
-# pipeline_processori
+# pipeline_processor
 
 
 	Computer System Design Assignment
