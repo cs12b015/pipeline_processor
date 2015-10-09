@@ -1,5 +1,5 @@
 import java.awt.EventQueue;
-
+import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
@@ -22,6 +22,8 @@ public class Frame1 {
 
 	private JFrame frame;
 	private JButton btnStart;
+	private JButton btnNext;
+	private JButton btnQuit;
 	private String instructionset;
 	private JEditorPane instructiontext;
 	private JLabel lblIftxt;
@@ -33,6 +35,8 @@ public class Frame1 {
 	private JLabel lblCpitxt;
 	private JLabel lblStalltxt;
 	private JLabel lblStallReasontxt;
+	private Queue<String> queue;
+	private Queue<String> sixqueue;
 	
 
 	/**
@@ -58,15 +62,74 @@ public class Frame1 {
 		initialize();
 	}
 	
-	private void myfunc(){
-		String[] arr= instructionset.split("\n");
+	private void mynextfunc(){
+		sixqueue.remove();
+		if(!queue.isEmpty()){
+			sixqueue.add(queue.peek());
+			queue.remove();
+		}
+		ArrayList<String> templist= new ArrayList<String>();
+		for (String s : sixqueue){
+			templist.add(s);
+		}
+		if(templist.size()==0){
+			btnNext.setEnabled(false);
+			btnQuit.setEnabled(true);
+		}
 		
+		System.out.println(templist);
+		if(templist.size()>5)
+			lblIftxt.setText(templist.get(5));
+		else
+			lblIftxt.setText("");
+		if(templist.size()>4)
+		lblIdtxt.setText(templist.get(4));
+		else
+			lblIdtxt.setText("");
+		if(templist.size()>3)
+		lblRdtxt.setText(templist.get(3));
+		else
+			lblRdtxt.setText("");
+		if(templist.size()>2)
+		lblAlutxt.setText(templist.get(2));
+		else
+			lblAlutxt.setText("");
+		if(templist.size()>1)
+		lblMemtxt.setText(templist.get(1));
+		else
+			lblMemtxt.setText("");
+		
+		if(templist.size()>0)
+		lblWbtxt.setText(templist.get(0));
+		else
+			lblWbtxt.setText("");
+		
+		
+		
+	}
+	
+	private void myfunc(){
+		instructionset=	instructiontext.getText();
+		String[] arr= instructionset.split("\n");
+		queue=new LinkedList<String>();
+		for(int i =0;i<arr.length;i++){
+			queue.add(arr[i]);
+		}
+		System.out.println(queue);
+		btnStart.setEnabled(false);
+		btnNext.setEnabled(true);
+		mynextfunc();
+				
 	}
 
 	/**
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {		
+		sixqueue=new LinkedList<String>();
+		for(int i=0;i<6;i++){
+			sixqueue.add("");
+		}
 		frame = new JFrame();
 		frame.setBounds(100, 100, 662, 494);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -82,14 +145,41 @@ public class Frame1 {
 		instructiontext.setBounds(40, 72, 250, 220);
 		frame.getContentPane().add(instructiontext);
 		
+		
+		
 		 btnStart = new JButton("Start");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				instructionset=	instructiontext.getSelectedText();
+				myfunc();
 			}
 		});
-		btnStart.setBounds(455, 429, 117, 25);
+		btnStart.setBounds(455, 429, 87, 25);
 		frame.getContentPane().add(btnStart);
+		
+		 btnNext = new JButton("Next");
+		 btnNext.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(!sixqueue.isEmpty())
+				mynextfunc();
+				else{
+					btnNext.setEnabled(false);
+				}
+			}
+		});
+		 btnNext.setEnabled(false);
+		 btnNext.setBounds(375, 429, 87, 25);
+		frame.getContentPane().add(btnNext);
+		
+		
+		 btnQuit = new JButton("Exit");
+		 btnQuit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				frame.dispose();
+			}
+		});
+		 btnQuit.setEnabled(false);
+		 btnQuit.setBounds(290, 429, 87, 25);
+		frame.getContentPane().add(btnQuit);
 		
 		JLabel lblIf = new JLabel("IF");
 		lblIf.setBounds(301, 70, 30, 15);
