@@ -22,6 +22,18 @@ public class Frame1 {
 
 	private JFrame frame;
 	private JButton btnStart;
+	private String instructionset;
+	private JEditorPane instructiontext;
+	private JLabel lblIftxt;
+	private JLabel lblIdtxt;
+	private JLabel lblRdtxt;
+	private JLabel lblAlutxt;
+	private JLabel lblMemtxt;
+	private JLabel lblWbtxt;
+	private JLabel lblCpitxt;
+	private JLabel lblStalltxt;
+	private JLabel lblStallReasontxt;
+	
 
 	/**
 	 * Launch the application.
@@ -45,6 +57,11 @@ public class Frame1 {
 	public Frame1() {
 		initialize();
 	}
+	
+	private void myfunc(){
+		String[] arr= instructionset.split("\n");
+		
+	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -60,7 +77,7 @@ public class Frame1 {
 		lblHead.setBounds(150, 17, 400, 40);
 		frame.getContentPane().add(lblHead);
 		
-		JEditorPane instructiontext = new JEditorPane();
+		instructiontext = new JEditorPane();
 		instructiontext.setFont(new Font("Dialog", Font.BOLD, 15));
 		instructiontext.setBounds(40, 72, 250, 220);
 		frame.getContentPane().add(instructiontext);
@@ -68,7 +85,7 @@ public class Frame1 {
 		 btnStart = new JButton("Start");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				
+				instructionset=	instructiontext.getSelectedText();
 			}
 		});
 		btnStart.setBounds(455, 429, 117, 25);
@@ -98,37 +115,37 @@ public class Frame1 {
 		lblWb.setBounds(301, 320, 30, 15);
 		frame.getContentPane().add(lblWb);
 		
-		JLabel lblIftxt = new JLabel("");
+		lblIftxt = new JLabel("");
 		lblIftxt.setOpaque(true);
 		lblIftxt.setBackground(Color.white);
 		lblIftxt.setBounds(365, 65, 200, 25);
 		frame.getContentPane().add(lblIftxt);
 		
-		JLabel lblIdtxt = new JLabel("");
+		lblIdtxt = new JLabel("");
 		lblIdtxt.setOpaque(true);
 		lblIdtxt.setBackground(Color.white);
 		lblIdtxt.setBounds(365, 115, 200, 25);
 		frame.getContentPane().add(lblIdtxt);
 		
-		JLabel lblRdtxt = new JLabel("");
+		lblRdtxt = new JLabel("");
 		lblRdtxt.setOpaque(true);
 		lblRdtxt.setBackground(Color.white);
 		lblRdtxt.setBounds(365, 165, 200, 25);
 		frame.getContentPane().add(lblRdtxt);
 		
-		JLabel lblAlutxt = new JLabel("");
+		lblAlutxt = new JLabel("");
 		lblAlutxt.setOpaque(true);
 		lblAlutxt.setBackground(Color.white);
 		lblAlutxt.setBounds(365, 215, 200, 25);
 		frame.getContentPane().add(lblAlutxt);
 		
-		JLabel lblMemtxt = new JLabel("");
+		lblMemtxt = new JLabel("");
 		lblMemtxt.setOpaque(true);
 		lblMemtxt.setBackground(Color.white);
 		lblMemtxt.setBounds(365, 265, 200, 25);
 		frame.getContentPane().add(lblMemtxt);
 		
-		JLabel lblWbtxt = new JLabel("");
+		lblWbtxt = new JLabel("");
 		lblWbtxt.setOpaque(true);
 		lblWbtxt.setBackground(Color.white);
 		lblWbtxt.setBounds(365, 315, 200, 25);
@@ -138,7 +155,7 @@ public class Frame1 {
 		lblCpi.setBounds(40, 330, 40, 15);
 		frame.getContentPane().add(lblCpi);
 		
-		JLabel lblCpitxt = new JLabel("");
+		lblCpitxt = new JLabel("");
 		lblCpitxt.setOpaque(true);
 		lblCpitxt.setBackground(Color.white);
 		lblCpitxt.setBounds(170, 325, 120, 25);
@@ -148,7 +165,7 @@ public class Frame1 {
 		lblStall.setBounds(40, 360, 160, 25);
 		frame.getContentPane().add(lblStall);
 		
-		JLabel lblStalltxt = new JLabel("");
+		lblStalltxt = new JLabel("");
 		lblStalltxt.setOpaque(true);
 		lblStalltxt.setBackground(Color.white);
 		lblStalltxt.setBounds(170, 355, 120, 25);
@@ -158,7 +175,7 @@ public class Frame1 {
 		lblStallReason.setBounds(40, 390, 160, 25);
 		frame.getContentPane().add(lblStallReason);
 		
-		JLabel lblStallReasontxt = new JLabel("");
+		lblStallReasontxt = new JLabel("");
 		lblStallReasontxt.setOpaque(true);
 		lblStallReasontxt.setBackground(Color.white);
 		lblStallReasontxt.setBounds(170, 385, 120, 25);
