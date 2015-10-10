@@ -94,6 +94,9 @@ public class Frame1 {
 		}
 		br.close();
 		content=content.trim();
+		for(int i=0;i<16;i++){
+			registers.add(i,0);
+		}
 		initialize();
 	}
 	
@@ -137,8 +140,8 @@ public class Frame1 {
 		
 		if(templist.size()>3){	
 			if(!templist.get(3).trim().equals("")){
-				decode idinst = new decode(templist.get(3));
-				lblRdtxt.setText(idinst.getResult());
+				String relreg = relregister(templist.get(3));
+				lblRdtxt.setText(relreg);
 			}
 			else{
 				lblRdtxt.setText("");
@@ -187,6 +190,81 @@ public class Frame1 {
 		
 		
 	}
+	
+	private String relregister(String instruction){
+		String output="";
+		String ss = instruction.substring(0,3);
+		String s0 = new String("000");
+		String s1 = new String("001");
+		String s2 = new String("010");
+		String s3 = new String("011");
+		String s4 = new String("100");
+		String s5 = new String("101");
+		String s6 = new String("110");
+		String s7 = new String("111");
+		
+		if(instruction.charAt(3)=='1'){
+			String imm = instruction.substring(12,16);
+			int r1 = Integer.parseInt(instruction.substring(4,8),2);
+			int r2 = Integer.parseInt(instruction.substring(8,12),2);
+			int immedia ;
+			if(instruction.charAt(12)=='1'){
+				immedia = Integer.parseInt(imm,2)-16;
+			}
+			else{												
+				immedia = Integer.parseInt(imm,2);
+			}
+			output="READ R"+r2;
+		}
+		else{
+			int r1 = Integer.parseInt(instruction.substring(4,8),2);
+			int r2 = Integer.parseInt(instruction.substring(8,12),2);
+			int r3 = Integer.parseInt(instruction.substring(12,16),2);
+			if(ss.compareTo(s3)==0){
+				output = "READ R"+r2;
+			}
+			else if(ss.compareTo(s4)==0){
+				output = "READ R"+r1;
+			}
+			else if(ss.compareTo(s5)==0){
+				int l1 ;
+				String ls1 = instruction.substring(4,12);
+				if(instruction.charAt(4)=='1'){
+					l1 = Integer.parseInt(ls1,2)-16;
+				}
+				else{												
+					l1 = Integer.parseInt(ls1,2);
+				}
+				output = "JMP" + " " + l1;
+			}
+			else if(ss.compareTo(s6)==0){
+				int l1 ;
+				String ls1 = instruction.substring(8,16);
+				if(instruction.charAt(8)=='1'){
+					l1 = Integer.parseInt(ls1,2)-16;
+				}
+				else{												
+					l1 = Integer.parseInt(ls1,2);
+				}
+				output = "READ R"+r1;
+			}
+			else if(ss.compareTo(s7)==0){
+				output = "HLT" ;
+			}
+			else {
+				if(r2==r3){
+					output="READ R"+ r2;
+				}else{
+					output="READ R"+ r2 +" AND "+"R" + r3;
+				}
+			}
+	 	}
+		
+		return output;
+	}
+	
+	
+	
 	
 	private void myfunc(){
 		instructionset=	instructiontext.getText();
@@ -358,7 +436,7 @@ public class Frame1 {
 		lblR_1.setBounds(608, 70, 30, 15);
 		frame.getContentPane().add(lblR_1);
 		
-		lblR_1txt = new JLabel("");
+		lblR_1txt = new JLabel("0");
 		lblR_1txt.setOpaque(true);
 		lblR_1txt.setBackground(Color.cyan);
 		lblR_1txt.setBounds(640, 65, 60, 25);
@@ -368,7 +446,7 @@ public class Frame1 {
 		lblR_2.setBounds(608, 120, 30, 15);
 		frame.getContentPane().add(lblR_2);
 		
-		lblR_2txt = new JLabel("");
+		lblR_2txt = new JLabel("0");
 		lblR_2txt.setOpaque(true);
 		lblR_2txt.setBackground(Color.cyan);
 		lblR_2txt.setBounds(640, 115, 60, 25);
@@ -378,7 +456,7 @@ public class Frame1 {
 		lblR_3.setBounds(608, 170, 30, 15);
 		frame.getContentPane().add(lblR_3);
 		
-		lblR_3txt = new JLabel("");
+		lblR_3txt = new JLabel("0");
 		lblR_3txt.setOpaque(true);
 		lblR_3txt.setBackground(Color.cyan);
 		lblR_3txt.setBounds(640, 165, 60, 25);
@@ -388,7 +466,7 @@ public class Frame1 {
 		lblR_4.setBounds(608, 220, 30, 15);
 		frame.getContentPane().add(lblR_4);
 		
-		lblR_4txt = new JLabel("");
+		lblR_4txt = new JLabel("0");
 		lblR_4txt.setOpaque(true);
 		lblR_4txt.setBackground(Color.cyan);
 		lblR_4txt.setBounds(640, 215, 60, 25);
@@ -398,7 +476,7 @@ public class Frame1 {
 		lblR_5.setBounds(608, 270, 30, 15);
 		frame.getContentPane().add(lblR_5);
 		
-		lblR_5txt = new JLabel("");
+		lblR_5txt = new JLabel("0");
 		lblR_5txt.setOpaque(true);
 		lblR_5txt.setBackground(Color.cyan);
 		lblR_5txt.setBounds(640, 265, 60, 25);
@@ -408,7 +486,7 @@ public class Frame1 {
 		lblR_6.setBounds(608, 320, 30, 15);
 		frame.getContentPane().add(lblR_6);
 		
-		lblR_6txt = new JLabel("");
+		lblR_6txt = new JLabel("0");
 		lblR_6txt.setOpaque(true);
 		lblR_6txt.setBackground(Color.cyan);
 		lblR_6txt.setBounds(640, 315, 60, 25);
@@ -418,7 +496,7 @@ public class Frame1 {
 		lblR_7.setBounds(608, 375, 30, 15);
 		frame.getContentPane().add(lblR_7);
 		
-		lblR_7txt = new JLabel("");
+		lblR_7txt = new JLabel("0");
 		lblR_7txt.setOpaque(true);
 		lblR_7txt.setBackground(Color.cyan);
 		lblR_7txt.setBounds(640, 365, 60, 25);
@@ -428,7 +506,7 @@ public class Frame1 {
 		lblR_8.setBounds(608, 420, 30, 15);
 		frame.getContentPane().add(lblR_8);
 		
-		lblR_8txt = new JLabel("");
+		lblR_8txt = new JLabel("0");
 		lblR_8txt.setOpaque(true);
 		lblR_8txt.setBackground(Color.cyan);
 		lblR_8txt.setBounds(640, 415, 60, 25);
@@ -438,7 +516,7 @@ public class Frame1 {
 		lblR_9.setBounds(720, 70, 30, 15);
 		frame.getContentPane().add(lblR_9);
 		
-		lblR_9txt = new JLabel("");
+		lblR_9txt = new JLabel("0");
 		lblR_9txt.setOpaque(true);
 		lblR_9txt.setBackground(Color.cyan);
 		lblR_9txt.setBounds(750, 65, 60, 25);
@@ -448,7 +526,7 @@ public class Frame1 {
 		lblR_10.setBounds(720, 120, 30, 15);
 		frame.getContentPane().add(lblR_10);
 		
-		lblR_10txt = new JLabel("");
+		lblR_10txt = new JLabel("0");
 		lblR_10txt.setOpaque(true);
 		lblR_10txt.setBackground(Color.cyan);
 		lblR_10txt.setBounds(750, 115, 60, 25);
@@ -458,7 +536,7 @@ public class Frame1 {
 		lblR_11.setBounds(720, 170, 30, 15);
 		frame.getContentPane().add(lblR_11);
 		
-		lblR_11txt = new JLabel("");
+		lblR_11txt = new JLabel("0");
 		lblR_11txt.setOpaque(true);
 		lblR_11txt.setBackground(Color.cyan);
 		lblR_11txt.setBounds(750, 165, 60, 25);
@@ -468,7 +546,7 @@ public class Frame1 {
 		lblR_12.setBounds(720, 220, 30, 15);
 		frame.getContentPane().add(lblR_12);
 		
-		lblR_12 = new JLabel("");
+		lblR_12 = new JLabel("0");
 		lblR_12.setOpaque(true);
 		lblR_12.setBackground(Color.cyan);
 		lblR_12.setBounds(750, 215, 60, 25);
@@ -478,7 +556,7 @@ public class Frame1 {
 		lblR_13.setBounds(720, 270, 30, 15);
 		frame.getContentPane().add(lblR_13);
 		
-		lblR_13txt = new JLabel("");
+		lblR_13txt = new JLabel("0");
 		lblR_13txt.setOpaque(true);
 		lblR_13txt.setBackground(Color.cyan);
 		lblR_13txt.setBounds(750, 265, 60, 25);
@@ -488,7 +566,7 @@ public class Frame1 {
 		lblR_14.setBounds(720, 320, 30, 15);
 		frame.getContentPane().add(lblR_14);
 		
-		lblR_14txt = new JLabel("");
+		lblR_14txt = new JLabel("0");
 		lblR_14txt.setOpaque(true);
 		lblR_14txt.setBackground(Color.cyan);
 		lblR_14txt.setBounds(750, 315, 60, 25);
@@ -498,7 +576,7 @@ public class Frame1 {
 		lblR_15.setBounds(720, 375, 30, 15);
 		frame.getContentPane().add(lblR_15);
 		
-		lblR_15txt = new JLabel("");
+		lblR_15txt = new JLabel("0");
 		lblR_15txt.setOpaque(true);
 		lblR_15txt.setBackground(Color.cyan);
 		lblR_15txt.setBounds(750, 365, 60, 25);
@@ -508,7 +586,7 @@ public class Frame1 {
 		lblR_16.setBounds(720, 420, 30, 15);
 		frame.getContentPane().add(lblR_16);
 		
-		lblR_16txt = new JLabel("");
+		lblR_16txt = new JLabel("0");
 		lblR_16txt.setOpaque(true);
 		lblR_16txt.setBackground(Color.cyan);
 		lblR_16txt.setBounds(750, 415, 60, 25);
