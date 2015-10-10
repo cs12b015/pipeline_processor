@@ -97,33 +97,86 @@ public class Frame1 {
 			lblIftxt.setText(templist.get(5));
 		else
 			lblIftxt.setText("");
-		if(templist.size()>4)
-		{
-			
-			lblIdtxt.setText(templist.get(4));
+		if(templist.size()>4){	
+			if(!templist.get(4).trim().equals("")){
+				decode idinst = new decode(templist.get(4));
+				String temp =idinst.getResult();
+				lblIdtxt.setText(temp);
+			}
+			else{
+				lblIdtxt.setText("");
+			}
 		}
 		else
 			lblIdtxt.setText("");
-		if(templist.size()>3)
-		lblRdtxt.setText(templist.get(3));
+		
+		if(templist.size()>3){	
+			if(!templist.get(3).trim().equals("")){
+				decode idinst = new decode(templist.get(3));
+				String temp =idinst.getResult();
+				lblRdtxt.setText(temp);
+			}
+			else{
+				lblRdtxt.setText("");
+			}
+		}
 		else
 			lblRdtxt.setText("");
-		if(templist.size()>2)
-		lblAlutxt.setText(templist.get(2));
+		
+		if(templist.size()>2){	
+			if(!templist.get(2).trim().equals("")){
+				decode idinst = new decode(templist.get(2));
+				String temp =idinst.getResult();
+				lblAlutxt.setText(temp);
+			}
+			else{
+				lblAlutxt.setText("");
+			}
+		}
 		else
 			lblAlutxt.setText("");
-		if(templist.size()>1)
-		lblMemtxt.setText(templist.get(1));
+		
+		
+		if(templist.size()>1){	
+			if(!templist.get(1).trim().equals("")){
+				decode idinst = new decode(templist.get(1));
+				String temp =idinst.getResult();
+				lblMemtxt.setText(temp);
+			}
+			else{
+				lblMemtxt.setText("");
+			}
+		}
 		else
 			lblMemtxt.setText("");
 		
-		if(templist.size()>0)
-		lblWbtxt.setText(templist.get(0));
+		if(templist.size()>0){	
+			if(!templist.get(0).trim().equals("")){
+				decode idinst = new decode(templist.get(0));
+				String temp =idinst.getResult();
+				lblWbtxt.setText(temp);
+			}
+			else{
+				lblWbtxt.setText("");
+			}
+		}
 		else
 			lblWbtxt.setText("");
 		
 		
 		
+	}
+	
+	private void changesixqueue(Queue<String> sixqueue,int numb,String string){
+		
+		ArrayList<String> array = new ArrayList<>(); 
+		for(int i=0;i<6;i++){
+			array.add(sixqueue.poll());
+		}
+		array.add(numb, string);
+		for(int i=0;i<6;i++){
+			sixqueue.add(array.get(i));
+		}
 	}
 	
 	private void myfunc(){
@@ -133,7 +186,7 @@ public class Frame1 {
 		for(int i =0;i<arr.length;i++){
 			queue.add(arr[i]);
 		}
-		System.out.println(queue);
+		/*System.out.println(queue);*/
 		btnStart.setEnabled(false);
 		btnNext.setEnabled(true);
 		mynextfunc();

@@ -1,10 +1,12 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.lang.*;
 	
 public class decode {
-	public static String src;
-	public String decode(String src){
-		src=this.src;
+	public String src;
+	public String output="";
+	public decode(String source){
+		this.src=source;
 		String ss = src.substring(0,3);
 		String s0 = new String("000");
 		String s1 = new String("001");
@@ -14,7 +16,7 @@ public class decode {
 		String s5 = new String("101");
 		String s6 = new String("110");
 		String s7 = new String("111");
-		String output="";
+		
 		
 		if(ss.compareTo(s0)==0){
 			output=parsingIns("ADD",src);
@@ -40,8 +42,11 @@ public class decode {
 		else if(ss.compareTo(s7)==0){
 			output=parsingIns("HLT",src);
 		}
-		return output;
 	}
+	public String getResult(){
+        return this.output;
+    }
+	
 	public static String parsingIns(String opcode,String src){
 		String output;
 		if(src.charAt(3)=='1'){
