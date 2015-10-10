@@ -40,9 +40,10 @@ public class Frame1 {
 	private JLabel lblCpitxt;
 	private JLabel lblStalltxt;
 	private JLabel lblStallReasontxt;
-	private Queue<String> queue;
+	private ArrayList<String> instructioncache;
 	private Queue<String> sixqueue;
 	private String content = "";
+	private int varpc=0;
 	
 
 	/**
@@ -79,9 +80,9 @@ public class Frame1 {
 	
 	private void mynextfunc(){
 		sixqueue.remove();
-		if(!queue.isEmpty()){
-			sixqueue.add(queue.peek());
-			queue.remove();
+		if(varpc < instructioncache.size()){
+			sixqueue.add(instructioncache.get(varpc));
+			varpc++;
 		}
 		ArrayList<String> templist= new ArrayList<String>();
 		for (String s : sixqueue){
@@ -93,8 +94,13 @@ public class Frame1 {
 		}
 		
 		/*System.out.println(templist);*/
-		if(templist.size()>5)
+		if(templist.size()>5){
+			if(varpc>511){
+				System.out.println("PC is greater than 512");
+				System.exit(0);
+			}
 			lblIftxt.setText(templist.get(5));
+		}
 		else
 			lblIftxt.setText("");
 		if(templist.size()>4){	
@@ -166,9 +172,9 @@ public class Frame1 {
 	private void myfunc(){
 		instructionset=	instructiontext.getText();
 		String[] arr= instructionset.split("\n");
-		queue=new LinkedList<String>();
+		instructioncache=new ArrayList<String>();
 		for(int i =0;i<arr.length;i++){
-			queue.add(arr[i]);
+			instructioncache.add(arr[i]);
 		}
 		/*System.out.println(queue);*/
 		btnStart.setEnabled(false);
