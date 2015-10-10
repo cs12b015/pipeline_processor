@@ -63,6 +63,7 @@ public class Frame1 {
 	private JLabel lblR_15txt;
 	private JLabel lblR_16txt;
 
+	private HashMap<Integer,JLabel> regmap=new HashMap<Integer,JLabel>();
 	
 
 	/**
@@ -96,6 +97,9 @@ public class Frame1 {
 		content=content.trim();
 		for(int i=0;i<16;i++){
 			registers.add(i,0);
+		}
+		for(int i=0;i<256;i++){
+			datacache.add(i,1);
 		}
 		initialize();
 	}
@@ -153,7 +157,8 @@ public class Frame1 {
 		if(templist.size()>2){	
 			if(!templist.get(2).trim().equals("")){
 				decode idinst = new decode(templist.get(2));
-				lblAlutxt.setText(idinst.getResult());
+				String aluinst = aluregister(idinst.getResult(),templist.get(2));
+				lblAlutxt.setText(aluinst);
 			}
 			else{
 				lblAlutxt.setText("");
@@ -166,7 +171,8 @@ public class Frame1 {
 		if(templist.size()>1){	
 			if(!templist.get(1).trim().equals("")){
 				decode idinst = new decode(templist.get(1));
-				lblMemtxt.setText(idinst.getResult());
+				String meminst = memregister(idinst.getResult(),templist.get(1));
+				lblMemtxt.setText(meminst);
 			}
 			else{
 				lblMemtxt.setText("");
@@ -178,7 +184,8 @@ public class Frame1 {
 		if(templist.size()>0){	
 			if(!templist.get(0).trim().equals("")){
 				decode idinst = new decode(templist.get(0));
-				lblWbtxt.setText(idinst.getResult());
+				String wbinst = wbregister(idinst.getResult(),templist.get(0));
+				lblWbtxt.setText(wbinst);
 			}
 			else{
 				lblWbtxt.setText("");
@@ -186,17 +193,238 @@ public class Frame1 {
 		}
 		else
 			lblWbtxt.setText("");
-		
-		
-		
 	}
 	
-	private String relregister(String instruction){
+	
+	
+	
+	
+	
+	public String wbregister(String instruction, String bitcode){
+		String output="";
+		String[] array= instruction.split(" ");
+		
+		if(array[0].equals("ADD"))
+		{
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			if(bitcode.charAt(3)=='1'){
+				String imm = bitcode.substring(12,16);
+				int immedia ;
+				if(bitcode.charAt(12)=='1'){
+					immedia = Integer.parseInt(imm,2)-16;
+				}
+				else{												
+					immedia = Integer.parseInt(imm,2);
+				}
+				int temp=registers.get(r2-1)+immedia;
+				output ="WB : R"+r1+" <-----"+temp;
+				registers.add(r1-1, temp);
+				regmap.get(r1).setText(""+temp);
+			}else{
+				int r3 = Integer.parseInt(bitcode.substring(12,16),2);
+				int temp=registers.get(r2-1)+registers.get(r3-1);
+				output ="WB : R"+r1+" <-----"+temp;
+				registers.add(r1-1, temp);
+				regmap.get(r1).setText(""+temp);
+			}		
+		}else if(array[0].equals("SUB")){
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			if(bitcode.charAt(3)=='1'){
+				String imm = bitcode.substring(12,16);
+				int immedia ;
+				if(bitcode.charAt(12)=='1'){
+					immedia = Integer.parseInt(imm,2)-16;
+				}
+				else{												
+					immedia = Integer.parseInt(imm,2);
+				}
+				int temp=registers.get(r2-1)-immedia;
+				output ="WB : R"+r1+" <-----"+temp;
+				registers.add(r1, temp);
+				regmap.get(r1).setText(""+temp);
+			}else{
+				int r3 = Integer.parseInt(bitcode.substring(12,16),2);
+				int temp=registers.get(r2-1)-registers.get(r3-1);
+				output ="WB : R"+r1+" <-----"+temp;
+				registers.add(r1-1, temp);
+				regmap.get(r1).setText(""+temp);
+			}
+			
+		}else if(array[0].equals("MUL")){
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			if(bitcode.charAt(3)=='1'){
+				String imm = bitcode.substring(12,16);
+				int immedia ;
+				if(bitcode.charAt(12)=='1'){
+					immedia = Integer.parseInt(imm,2)-16;
+				}
+				else{												
+					immedia = Integer.parseInt(imm,2);
+				}
+				int temp=registers.get(r2-1)*immedia;
+				output ="WB : R"+r1+" <-----"+temp;
+				registers.add(r1-1, temp);
+				regmap.get(r1).setText(""+temp);
+			}else{
+				int r3 = Integer.parseInt(bitcode.substring(12,16),2);
+				int temp=registers.get(r2-1)*registers.get(r3-1);
+				output ="WB : R"+r1+" <-----"+temp;
+				registers.add(r1-1, temp);
+				regmap.get(r1).setText(""+temp);
+			}
+			
+		}else if(array[0].equals("BEQZ")){
+			output = instruction;
+		}else if(array[0].equals("JMP")){
+			output=instruction;
+		}else if(array[0].equals("LD")){
+			output="WB <-- LOAD";
+		}else if(array[0].equals("SD")){
+			output="WB <-- STORE";
+		}else{
+			output=instruction;
+		}
+		return output;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public String memregister(String instruction, String bitcode){
+		String output="";
+		String[] array = instruction.split(" ");
+		if(array[0].equals("LD")){
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			output="LOAD R"+r1+" <--- "+datacache.get(registers.get(r2));
+			
+		}else if(array[0].equals("SD")){
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			output="STORE R"+r2+" <--- "+datacache.get(registers.get(r1));
+		}else{
+			output =instruction;
+		}
+		return output;		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	public String aluregister(String instruction,String bitcode){
+		String output="";
+		String[] array= instruction.split(" ");
+		
+		if(array[0].equals("ADD"))
+		{
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			if(bitcode.charAt(3)=='1'){
+				String imm = bitcode.substring(12,16);
+				int immedia ;
+				if(bitcode.charAt(12)=='1'){
+					immedia = Integer.parseInt(imm,2)-16;
+				}
+				else{												
+					immedia = Integer.parseInt(imm,2);
+				}
+				output ="ALUOUT <-- "+registers.get(r2-1)+" + "+immedia;
+			}else{
+				int r3 = Integer.parseInt(bitcode.substring(12,16),2);
+				output ="ALUOUT <-- "+registers.get(r2-1)+" + "+registers.get(r3-1);
+			}		
+		}else if(array[0].equals("SUB")){
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			if(bitcode.charAt(3)=='1'){
+				String imm = bitcode.substring(12,16);
+				int immedia ;
+				if(bitcode.charAt(12)=='1'){
+					immedia = Integer.parseInt(imm,2)-16;
+				}
+				else{												
+					immedia = Integer.parseInt(imm,2);
+				}
+				output ="ALUOUT <-- "+registers.get(r2-1)+" - "+immedia;
+			}else{
+				int r3 = Integer.parseInt(bitcode.substring(12,16),2);
+				output ="ALUOUT <-- "+registers.get(r2-1)+" - "+registers.get(r3-1);
+			}
+			
+		}else if(array[0].equals("MUL")){
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			if(bitcode.charAt(3)=='1'){
+				String imm = bitcode.substring(12,16);
+				int immedia ;
+				if(bitcode.charAt(12)=='1'){
+					immedia = Integer.parseInt(imm,2)-16;
+				}
+				else{												
+					immedia = Integer.parseInt(imm,2);
+				}
+				output ="ALUOUT <-- "+registers.get(r2-1)+" * "+immedia;
+			}else{
+				int r3 = Integer.parseInt(bitcode.substring(12,16),2);
+				output ="ALUOUT <-- "+registers.get(r2-1)+" * "+registers.get(r3-1);
+			}
+			
+		}else if(array[0].equals("BEQZ")){
+			int l1 ;
+			String ls1 = bitcode.substring(8,16);
+			if(bitcode.charAt(8)=='1'){
+				l1 = Integer.parseInt(ls1,2)-16;
+			}
+			else{												
+				l1 = Integer.parseInt(ls1,2);
+			}
+			int temp=l1+varpc-3;
+			output = "AlUOUT <--"+temp;
+		}else if(array[0].equals("JMP")){
+			int l1 ;
+			String ls1 = bitcode.substring(4,12);
+			if(bitcode.charAt(4)=='1'){
+				l1 = Integer.parseInt(ls1,2)-16;
+			}
+			else{												
+				l1 = Integer.parseInt(ls1,2);
+			}
+			int temp=l1+varpc-2;
+			output="ALUOUT <-- "+temp;
+		}else if(array[0].equals("LD")){
+			output="ALUOUT <-- LOAD";
+		}else if(array[0].equals("SD")){
+			output="ALUOUT <-- STORE";
+		}else{
+			output=instruction;
+		}	
+		return output;
+	}
+	
+	
+	
+	
+	
+	
+	public String relregister(String instruction){
 		String output="";
 		String ss = instruction.substring(0,3);
-		String s0 = new String("000");
-		String s1 = new String("001");
-		String s2 = new String("010");
 		String s3 = new String("011");
 		String s4 = new String("100");
 		String s5 = new String("101");
@@ -204,27 +432,18 @@ public class Frame1 {
 		String s7 = new String("111");
 		
 		if(instruction.charAt(3)=='1'){
-			String imm = instruction.substring(12,16);
-			int r1 = Integer.parseInt(instruction.substring(4,8),2);
 			int r2 = Integer.parseInt(instruction.substring(8,12),2);
-			int immedia ;
-			if(instruction.charAt(12)=='1'){
-				immedia = Integer.parseInt(imm,2)-16;
-			}
-			else{												
-				immedia = Integer.parseInt(imm,2);
-			}
-			output="READ R"+r2;
+			output="READ R"+r2+" ==> "+registers.get(r2-1);
 		}
 		else{
 			int r1 = Integer.parseInt(instruction.substring(4,8),2);
 			int r2 = Integer.parseInt(instruction.substring(8,12),2);
 			int r3 = Integer.parseInt(instruction.substring(12,16),2);
 			if(ss.compareTo(s3)==0){
-				output = "READ R"+r2;
+				output = "READ R"+r2+" ==> "+registers.get(r2-1);
 			}
 			else if(ss.compareTo(s4)==0){
-				output = "READ R"+r1;
+				output = "READ R"+r1+" ==> "+registers.get(r1-1);
 			}
 			else if(ss.compareTo(s5)==0){
 				int l1 ;
@@ -238,31 +457,17 @@ public class Frame1 {
 				output = "JMP" + " " + l1;
 			}
 			else if(ss.compareTo(s6)==0){
-				int l1 ;
-				String ls1 = instruction.substring(8,16);
-				if(instruction.charAt(8)=='1'){
-					l1 = Integer.parseInt(ls1,2)-16;
-				}
-				else{												
-					l1 = Integer.parseInt(ls1,2);
-				}
-				output = "READ R"+r1;
+				output = "READ R"+r1+" ==> "+registers.get(r2-1);
 			}
 			else if(ss.compareTo(s7)==0){
 				output = "HLT" ;
 			}
 			else {
-				if(r2==r3){
-					output="READ R"+ r2;
-				}else{
-					output="READ R"+ r2 +" AND "+"R" + r3;
-				}
+				output="READ R"+ r2+" ==> "+registers.get(r2-1) +" AND "+"R" + r3+" ==> "+registers.get(r2-1);
 			}
 	 	}
-		
 		return output;
 	}
-	
 	
 	
 	
@@ -369,37 +574,37 @@ public class Frame1 {
 		lblIftxt = new JLabel("");
 		lblIftxt.setOpaque(true);
 		lblIftxt.setBackground(Color.white);
-		lblIftxt.setBounds(365, 65, 200, 25);
+		lblIftxt.setBounds(365, 65, 220, 25);
 		frame.getContentPane().add(lblIftxt);
 		
 		lblIdtxt = new JLabel("");
 		lblIdtxt.setOpaque(true);
 		lblIdtxt.setBackground(Color.white);
-		lblIdtxt.setBounds(365, 115, 200, 25);
+		lblIdtxt.setBounds(365, 115, 220, 25);
 		frame.getContentPane().add(lblIdtxt);
 		
 		lblRdtxt = new JLabel("");
 		lblRdtxt.setOpaque(true);
 		lblRdtxt.setBackground(Color.white);
-		lblRdtxt.setBounds(365, 165, 200, 25);
+		lblRdtxt.setBounds(365, 165, 220, 25);
 		frame.getContentPane().add(lblRdtxt);
 		
 		lblAlutxt = new JLabel("");
 		lblAlutxt.setOpaque(true);
 		lblAlutxt.setBackground(Color.white);
-		lblAlutxt.setBounds(365, 215, 200, 25);
+		lblAlutxt.setBounds(365, 215, 220, 25);
 		frame.getContentPane().add(lblAlutxt);
 		
 		lblMemtxt = new JLabel("");
 		lblMemtxt.setOpaque(true);
 		lblMemtxt.setBackground(Color.white);
-		lblMemtxt.setBounds(365, 265, 200, 25);
+		lblMemtxt.setBounds(365, 265, 220, 25);
 		frame.getContentPane().add(lblMemtxt);
 		
 		lblWbtxt = new JLabel("");
 		lblWbtxt.setOpaque(true);
 		lblWbtxt.setBackground(Color.white);
-		lblWbtxt.setBounds(365, 315, 200, 25);
+		lblWbtxt.setBounds(365, 315, 220, 25);
 		frame.getContentPane().add(lblWbtxt);
 		
 		JLabel lblCpi= new JLabel("CPI");
@@ -591,6 +796,28 @@ public class Frame1 {
 		lblR_16txt.setBackground(Color.cyan);
 		lblR_16txt.setBounds(750, 415, 60, 25);
 		frame.getContentPane().add(lblR_16txt);
+		regmap.put(1, lblR_1txt);
+		regmap.put(2, lblR_2txt);
+		regmap.put(3, lblR_3txt);
+		regmap.put(4, lblR_4txt);
+		regmap.put(5, lblR_5txt);
+		regmap.put(6, lblR_6txt);
+		regmap.put(7, lblR_7txt);
+		regmap.put(8, lblR_8txt);
+		regmap.put(9, lblR_9txt);
+		regmap.put(10, lblR_10txt);
+		regmap.put(11, lblR_11txt);
+		regmap.put(12, lblR_12txt);
+		regmap.put(13, lblR_13txt);
+		regmap.put(14, lblR_14txt);
+		regmap.put(15, lblR_15txt);
+		regmap.put(16, lblR_16txt);
+		
 		
 	}
 }
+
+
+
+
+
