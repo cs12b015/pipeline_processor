@@ -40,6 +40,8 @@ public class Frame1 {
 	private JLabel lblCpitxt;
 	private JLabel lblStalltxt;
 	private JLabel lblStallReasontxt;
+	private ArrayList<Integer> registers =new ArrayList<Integer>();
+	private ArrayList<Integer> datacache =new ArrayList<Integer>();
 	private ArrayList<String> instructioncache;
 	private Queue<String> sixqueue;
 	private String content = "";
@@ -93,7 +95,7 @@ public class Frame1 {
 			btnQuit.setEnabled(true);
 		}
 		
-		/*System.out.println(templist);*/
+		
 		if(templist.size()>5){
 			if(varpc>511){
 				System.out.println("PC is greater than 512");
