@@ -53,17 +53,57 @@ public class decode {
 			String imm = src.substring(12,16);
 			int r1 = Integer.parseInt(src.substring(4,8),2);
 			int r2 = Integer.parseInt(src.substring(8,12),2);
-			int immedia = Integer.parseInt(imm,2);
+			int immedia ;
+			if(src.charAt(12)=='1'){
+				immedia = Integer.parseInt(imm,2)-16;
+			}
+			else{												
+				immedia = Integer.parseInt(imm,2);
+			}
 			output=opcode + " R"+ r1 + " R"+ r2 + " "+ immedia;
 		}
 		else{
 			int r1 = Integer.parseInt(src.substring(4,8),2);
 			int r2 = Integer.parseInt(src.substring(8,12),2);
 			int r3 = Integer.parseInt(src.substring(12,16),2);
-			output=opcode + " R" + r1 + " R"+ r2 +" R" + r3;
+			if(opcode.compareTo("LD")==0){
+				output = opcode + " R" + r1 +" [R" + r2 + "]";
+			}
+			else if(opcode.compareTo("SD")==0){
+				output = opcode + " [R" + r1 + "]" + " R" + r2;
+			}
+			else if(opcode.compareTo("JMP")==0){
+				int l1 ;
+				String ls1 = src.substring(4,8);
+				if(src.charAt(4)=='1'){
+					l1 = Integer.parseInt(ls1,2)-16;
+				}
+				else{												
+					l1 = Integer.parseInt(ls1,2);
+				}
+				output = opcode + " #" + l1;
+			}
+			else if(opcode.compareTo("BEQZ")==0){
+				int l1 ;
+				String ls1 = src.substring(8,12);
+				if(src.charAt(8)=='1'){
+					l1 = Integer.parseInt(ls1,2)-16;
+				}
+				else{												
+					l1 = Integer.parseInt(ls1,2);
+				}
+				output = opcode + "[R "+r1+"]"+" #" + l1;
+			}
+			else if(opcode.compareTo("HLT")==0){
+				output = opcode ;
+			}
+			else {
+				output=opcode + " R" + r1 + " R"+ r2 +" R" + r3;
+			}
 	 	}
 		return output;
 	}
+	
 }
 
 
