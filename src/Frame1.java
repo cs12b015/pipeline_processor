@@ -67,12 +67,12 @@ public class Frame1 {
 	 */
 	public Frame1() throws IOException {
 		
-		BufferedReader br = new BufferedReader(new FileReader("testCases/test1.b"));
-		
+		BufferedReader br = new BufferedReader(new FileReader("testCases/test1.b"));		
         String line =  null;
 		while((line=br.readLine())!=null){
 		    content=content+"\n"+line;
 		}
+		br.close();
 		content=content.trim();
 		initialize();
 	}
@@ -113,8 +113,7 @@ public class Frame1 {
 		if(templist.size()>3){	
 			if(!templist.get(3).trim().equals("")){
 				decode idinst = new decode(templist.get(3));
-				String temp =idinst.getResult();
-				lblRdtxt.setText(temp);
+				lblRdtxt.setText(idinst.getResult());
 			}
 			else{
 				lblRdtxt.setText("");
@@ -126,8 +125,7 @@ public class Frame1 {
 		if(templist.size()>2){	
 			if(!templist.get(2).trim().equals("")){
 				decode idinst = new decode(templist.get(2));
-				String temp =idinst.getResult();
-				lblAlutxt.setText(temp);
+				lblAlutxt.setText(idinst.getResult());
 			}
 			else{
 				lblAlutxt.setText("");
@@ -140,8 +138,7 @@ public class Frame1 {
 		if(templist.size()>1){	
 			if(!templist.get(1).trim().equals("")){
 				decode idinst = new decode(templist.get(1));
-				String temp =idinst.getResult();
-				lblMemtxt.setText(temp);
+				lblMemtxt.setText(idinst.getResult());
 			}
 			else{
 				lblMemtxt.setText("");
@@ -153,8 +150,7 @@ public class Frame1 {
 		if(templist.size()>0){	
 			if(!templist.get(0).trim().equals("")){
 				decode idinst = new decode(templist.get(0));
-				String temp =idinst.getResult();
-				lblWbtxt.setText(temp);
+				lblWbtxt.setText(idinst.getResult());
 			}
 			else{
 				lblWbtxt.setText("");
@@ -165,18 +161,6 @@ public class Frame1 {
 		
 		
 		
-	}
-	
-	private void changesixqueue(Queue<String> sixqueue,int numb,String string){
-		
-		ArrayList<String> array = new ArrayList<>(); 
-		for(int i=0;i<6;i++){
-			array.add(sixqueue.poll());
-		}
-		array.add(numb, string);
-		for(int i=0;i<6;i++){
-			sixqueue.add(array.get(i));
-		}
 	}
 	
 	private void myfunc(){
