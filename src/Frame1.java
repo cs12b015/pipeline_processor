@@ -46,6 +46,23 @@ public class Frame1 {
 	private Queue<String> sixqueue;
 	private String content = "";
 	private int varpc=0;
+	private JLabel lblR_1txt;
+	private JLabel lblR_2txt;
+	private JLabel lblR_3txt;
+	private JLabel lblR_4txt;
+	private JLabel lblR_5txt;
+	private JLabel lblR_6txt;
+	private JLabel lblR_7txt;
+	private JLabel lblR_8txt;
+	private JLabel lblR_9txt;
+	private JLabel lblR_10txt;
+	private JLabel lblR_11txt;
+	private JLabel lblR_12txt;
+	private JLabel lblR_13txt;
+	private JLabel lblR_14txt;
+	private JLabel lblR_15txt;
+	private JLabel lblR_16txt;
+
 	
 
 	/**
@@ -194,13 +211,13 @@ public class Frame1 {
 			sixqueue.add("");
 		}
 		frame = new JFrame();
-		frame.setBounds(100, 100, 662, 494);
+		frame.setBounds(100, 100, 857, 494);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
 		JLabel lblHead= new JLabel("Scalar Pipelined Processor");
 		lblHead.setFont(new Font("Abyssinica SIL", Font.PLAIN, 28));
-		lblHead.setBounds(150, 17, 400, 40);
+		lblHead.setBounds(260, 17, 400, 40);
 		frame.getContentPane().add(lblHead);
 		
 		instructiontext = new JEditorPane();
@@ -219,7 +236,7 @@ public class Frame1 {
 				myfunc();
 			}
 		});
-		btnStart.setBounds(455, 429, 87, 25);
+		btnStart.setBounds(480, 455, 87, 25);
 		frame.getContentPane().add(btnStart);
 		
 		 btnNext = new JButton("Next");
@@ -233,7 +250,7 @@ public class Frame1 {
 			}
 		});
 		 btnNext.setEnabled(false);
-		 btnNext.setBounds(375, 429, 87, 25);
+		 btnNext.setBounds(400, 455, 87, 25);
 		frame.getContentPane().add(btnNext);
 		
 		
@@ -244,7 +261,7 @@ public class Frame1 {
 			}
 		});
 		 btnQuit.setEnabled(false);
-		 btnQuit.setBounds(290, 429, 87, 25);
+		 btnQuit.setBounds(315, 455, 87, 25);
 		frame.getContentPane().add(btnQuit);
 		
 		JLabel lblIf = new JLabel("IF");
@@ -336,6 +353,166 @@ public class Frame1 {
 		lblStallReasontxt.setBackground(Color.white);
 		lblStallReasontxt.setBounds(170, 385, 120, 25);
 		frame.getContentPane().add(lblStallReasontxt);
+		
+		JLabel lblR_1 = new JLabel("R1");
+		lblR_1.setBounds(608, 70, 30, 15);
+		frame.getContentPane().add(lblR_1);
+		
+		lblR_1txt = new JLabel("");
+		lblR_1txt.setOpaque(true);
+		lblR_1txt.setBackground(Color.cyan);
+		lblR_1txt.setBounds(640, 65, 60, 25);
+		frame.getContentPane().add(lblR_1txt);
+		
+		JLabel lblR_2 = new JLabel("R2");
+		lblR_2.setBounds(608, 120, 30, 15);
+		frame.getContentPane().add(lblR_2);
+		
+		lblR_2txt = new JLabel("");
+		lblR_2txt.setOpaque(true);
+		lblR_2txt.setBackground(Color.cyan);
+		lblR_2txt.setBounds(640, 115, 60, 25);
+		frame.getContentPane().add(lblR_2txt);
+		
+		JLabel lblR_3 = new JLabel("R3");
+		lblR_3.setBounds(608, 170, 30, 15);
+		frame.getContentPane().add(lblR_3);
+		
+		lblR_3txt = new JLabel("");
+		lblR_3txt.setOpaque(true);
+		lblR_3txt.setBackground(Color.cyan);
+		lblR_3txt.setBounds(640, 165, 60, 25);
+		frame.getContentPane().add(lblR_3txt);
+		
+		JLabel lblR_4 = new JLabel("R4");
+		lblR_4.setBounds(608, 220, 30, 15);
+		frame.getContentPane().add(lblR_4);
+		
+		lblR_4txt = new JLabel("");
+		lblR_4txt.setOpaque(true);
+		lblR_4txt.setBackground(Color.cyan);
+		lblR_4txt.setBounds(640, 215, 60, 25);
+		frame.getContentPane().add(lblR_4txt);
+		
+		JLabel lblR_5 = new JLabel("R5");
+		lblR_5.setBounds(608, 270, 30, 15);
+		frame.getContentPane().add(lblR_5);
+		
+		lblR_5txt = new JLabel("");
+		lblR_5txt.setOpaque(true);
+		lblR_5txt.setBackground(Color.cyan);
+		lblR_5txt.setBounds(640, 265, 60, 25);
+		frame.getContentPane().add(lblR_5txt);
+		
+		JLabel lblR_6 = new JLabel("R6");
+		lblR_6.setBounds(608, 320, 30, 15);
+		frame.getContentPane().add(lblR_6);
+		
+		lblR_6txt = new JLabel("");
+		lblR_6txt.setOpaque(true);
+		lblR_6txt.setBackground(Color.cyan);
+		lblR_6txt.setBounds(640, 315, 60, 25);
+		frame.getContentPane().add(lblR_6txt);
+		
+		JLabel lblR_7 = new JLabel("R7");
+		lblR_7.setBounds(608, 375, 30, 15);
+		frame.getContentPane().add(lblR_7);
+		
+		lblR_7txt = new JLabel("");
+		lblR_7txt.setOpaque(true);
+		lblR_7txt.setBackground(Color.cyan);
+		lblR_7txt.setBounds(640, 365, 60, 25);
+		frame.getContentPane().add(lblR_7txt);
+		
+		JLabel lblR_8 = new JLabel("R8");
+		lblR_8.setBounds(608, 420, 30, 15);
+		frame.getContentPane().add(lblR_8);
+		
+		lblR_8txt = new JLabel("");
+		lblR_8txt.setOpaque(true);
+		lblR_8txt.setBackground(Color.cyan);
+		lblR_8txt.setBounds(640, 415, 60, 25);
+		frame.getContentPane().add(lblR_8txt);
+		
+		JLabel lblR_9 = new JLabel("R9");
+		lblR_9.setBounds(720, 70, 30, 15);
+		frame.getContentPane().add(lblR_9);
+		
+		lblR_9txt = new JLabel("");
+		lblR_9txt.setOpaque(true);
+		lblR_9txt.setBackground(Color.cyan);
+		lblR_9txt.setBounds(750, 65, 60, 25);
+		frame.getContentPane().add(lblR_9txt);
+		
+		JLabel lblR_10 = new JLabel("R10");
+		lblR_10.setBounds(720, 120, 30, 15);
+		frame.getContentPane().add(lblR_10);
+		
+		lblR_10txt = new JLabel("");
+		lblR_10txt.setOpaque(true);
+		lblR_10txt.setBackground(Color.cyan);
+		lblR_10txt.setBounds(750, 115, 60, 25);
+		frame.getContentPane().add(lblR_10txt);
+		
+		JLabel lblR_11 = new JLabel("R11");
+		lblR_11.setBounds(720, 170, 30, 15);
+		frame.getContentPane().add(lblR_11);
+		
+		lblR_11txt = new JLabel("");
+		lblR_11txt.setOpaque(true);
+		lblR_11txt.setBackground(Color.cyan);
+		lblR_11txt.setBounds(750, 165, 60, 25);
+		frame.getContentPane().add(lblR_11txt);
+		
+		JLabel lblR_12 = new JLabel("R12");
+		lblR_12.setBounds(720, 220, 30, 15);
+		frame.getContentPane().add(lblR_12);
+		
+		lblR_12 = new JLabel("");
+		lblR_12.setOpaque(true);
+		lblR_12.setBackground(Color.cyan);
+		lblR_12.setBounds(750, 215, 60, 25);
+		frame.getContentPane().add(lblR_12);
+		
+		JLabel lblR_13 = new JLabel("R13");
+		lblR_13.setBounds(720, 270, 30, 15);
+		frame.getContentPane().add(lblR_13);
+		
+		lblR_13txt = new JLabel("");
+		lblR_13txt.setOpaque(true);
+		lblR_13txt.setBackground(Color.cyan);
+		lblR_13txt.setBounds(750, 265, 60, 25);
+		frame.getContentPane().add(lblR_13txt);
+		
+		JLabel lblR_14 = new JLabel("R14");
+		lblR_14.setBounds(720, 320, 30, 15);
+		frame.getContentPane().add(lblR_14);
+		
+		lblR_14txt = new JLabel("");
+		lblR_14txt.setOpaque(true);
+		lblR_14txt.setBackground(Color.cyan);
+		lblR_14txt.setBounds(750, 315, 60, 25);
+		frame.getContentPane().add(lblR_14txt);
+		
+		JLabel lblR_15 = new JLabel("R15");
+		lblR_15.setBounds(720, 375, 30, 15);
+		frame.getContentPane().add(lblR_15);
+		
+		lblR_15txt = new JLabel("");
+		lblR_15txt.setOpaque(true);
+		lblR_15txt.setBackground(Color.cyan);
+		lblR_15txt.setBounds(750, 365, 60, 25);
+		frame.getContentPane().add(lblR_15txt);
+		
+		JLabel lblR_16 = new JLabel("R16");
+		lblR_16.setBounds(720, 420, 30, 15);
+		frame.getContentPane().add(lblR_16);
+		
+		lblR_16txt = new JLabel("");
+		lblR_16txt.setOpaque(true);
+		lblR_16txt.setBackground(Color.cyan);
+		lblR_16txt.setBounds(750, 415, 60, 25);
+		frame.getContentPane().add(lblR_16txt);
 		
 	}
 }
