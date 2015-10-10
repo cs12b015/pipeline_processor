@@ -1,4 +1,9 @@
 import java.awt.EventQueue;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 import javax.swing.JFrame;
 import javax.swing.JTextArea;
@@ -37,6 +42,7 @@ public class Frame1 {
 	private JLabel lblStallReasontxt;
 	private Queue<String> queue;
 	private Queue<String> sixqueue;
+	private String content = "";
 	
 
 	/**
@@ -57,8 +63,17 @@ public class Frame1 {
 
 	/**
 	 * Create the application.
+	 * @throws IOException 
 	 */
-	public Frame1() {
+	public Frame1() throws IOException {
+		
+		BufferedReader br = new BufferedReader(new FileReader("testCases/test1.b"));
+		
+        String line =  null;
+		while((line=br.readLine())!=null){
+		    content=content+"\n"+line;
+		}
+		content=content.trim();
 		initialize();
 	}
 	
@@ -77,13 +92,16 @@ public class Frame1 {
 			btnQuit.setEnabled(true);
 		}
 		
-		System.out.println(templist);
+		/*System.out.println(templist);*/
 		if(templist.size()>5)
 			lblIftxt.setText(templist.get(5));
 		else
 			lblIftxt.setText("");
 		if(templist.size()>4)
-		lblIdtxt.setText(templist.get(4));
+		{
+			
+			lblIdtxt.setText(templist.get(4));
+		}
 		else
 			lblIdtxt.setText("");
 		if(templist.size()>3)
@@ -143,7 +161,10 @@ public class Frame1 {
 		instructiontext = new JEditorPane();
 		instructiontext.setFont(new Font("Dialog", Font.BOLD, 15));
 		instructiontext.setBounds(40, 72, 250, 220);
+		instructiontext.setText(content);
 		frame.getContentPane().add(instructiontext);
+		
+		
 		
 		
 		
