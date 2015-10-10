@@ -74,25 +74,25 @@ public class decode {
 			}
 			else if(opcode.compareTo("JMP")==0){
 				int l1 ;
-				String ls1 = src.substring(4,8);
+				String ls1 = src.substring(4,12);
 				if(src.charAt(4)=='1'){
 					l1 = Integer.parseInt(ls1,2)-16;
 				}
 				else{												
 					l1 = Integer.parseInt(ls1,2);
 				}
-				output = opcode + " #" + l1;
+				output = opcode + " " + l1;
 			}
 			else if(opcode.compareTo("BEQZ")==0){
 				int l1 ;
-				String ls1 = src.substring(8,12);
+				String ls1 = src.substring(8,16);
 				if(src.charAt(8)=='1'){
 					l1 = Integer.parseInt(ls1,2)-16;
 				}
 				else{												
 					l1 = Integer.parseInt(ls1,2);
 				}
-				output = opcode + "[R "+r1+"]"+" #" + l1;
+				output = opcode + "[R "+r1+"]"+" " + l1;
 			}
 			else if(opcode.compareTo("HLT")==0){
 				output = opcode ;
