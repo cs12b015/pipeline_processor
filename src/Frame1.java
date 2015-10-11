@@ -486,6 +486,7 @@ public class Frame1 {
 			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
 			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
 			registers.set(r1-1, datacache.get(registers.get(r2-1)));
+			regmap.get(r1).setText(""+registers.get(r1-1));
 			output="LOAD R"+r1+" <--- "+datacache.get(registers.get(r2-1));
 			
 		}else if(array[0].equals("SD")){
