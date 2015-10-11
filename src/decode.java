@@ -54,13 +54,26 @@ public class decode {
 			int r1 = Integer.parseInt(src.substring(4,8),2);
 			int r2 = Integer.parseInt(src.substring(8,12),2);
 			int immedia ;
-			if(src.charAt(12)=='1'){
-				immedia = Integer.parseInt(imm,2)-16;
+			if(opcode.compareTo("JMP")==0){
+				int l1 ;
+				String ls1 = src.substring(4,12);
+				if(src.charAt(4)=='1'){
+					l1 = Integer.parseInt(ls1,2)-16;
+				}
+				else{												
+					l1 = Integer.parseInt(ls1,2);
+				}
+				output = opcode + " " + l1;
 			}
-			else{												
-				immedia = Integer.parseInt(imm,2);
+			else{
+				if(src.charAt(12)=='1'){
+					immedia = Integer.parseInt(imm,2)-16;
+				}
+				else{												
+					immedia = Integer.parseInt(imm,2);
+				}
+				output=opcode + " R"+ r1 + " R"+ r2 + " "+ immedia;
 			}
-			output=opcode + " R"+ r1 + " R"+ r2 + " "+ immedia;
 		}
 		else{
 			int r1 = Integer.parseInt(src.substring(4,8),2);

@@ -43,10 +43,12 @@ public class Frame1 {
 	private JLabel lblStallReasontxt;
 	private Integer putstallnumb;
 	private Integer cyclecount;
+	private Integer JumpFlag=0;
 	private ArrayList<Integer> registers =new ArrayList<Integer>();
 	private ArrayList<Integer> datacache =new ArrayList<Integer>();
 	private ArrayList<Integer> regflags =new ArrayList<Integer>();
 	private ArrayList<Integer> checkregflags = new ArrayList<Integer>();
+	private ArrayList<String> StallReason = new ArrayList<String>();
 	private Integer InstructionCount;
 	private ArrayList<String> instructioncache;
 	private Queue<String> sixqueue;
@@ -95,7 +97,7 @@ public class Frame1 {
 	public Frame1() throws IOException {
 		
 		InstructionCount=0;
-		BufferedReader br = new BufferedReader(new FileReader("testCases/test2.b"));		
+		BufferedReader br = new BufferedReader(new FileReader("testCases/test3.b"));		
         String line =  null;
 		while((line=br.readLine())!=null){
 		    content=content+"\n"+line;
@@ -119,8 +121,8 @@ public class Frame1 {
 	}
 	
 	private void mynextfunc(){
-		/*cyclecount++;
-		lblCyclestxt.setText(" "+cyclecount);*/
+		
+		int checkingstall=putstallnumb;
 		
 		for(int i=0;i<checkregflags.size();i++){
 			if(regflags.get(checkregflags.get(i)).equals(0)){
@@ -129,22 +131,24 @@ public class Frame1 {
 				i--;
 			}
 		}
-		/*System.out.println(checkregflags);*/
-		/*System.out.println(sixqueue);*/
 		
-		if(!checkregflags.isEmpty()){
-			
-			PutStall(3);
+		
+		if(JumpFlag==1){
+			putjumpstall();
 		}
 		else{
-			sixqueue.remove();
-			if(varpc < instructioncache.size()){
-				sixqueue.add(instructioncache.get(varpc));
-				varpc++;
+			if(!checkregflags.isEmpty()){			
+				PutStall(3);
+			}
+			else{
+				sixqueue.remove();
+				if(varpc < instructioncache.size()){
+					sixqueue.add(instructioncache.get(varpc));
+					varpc++;
+				}
 			}
 		}		
-		
-		/*System.out.println(sixqueue);*/
+
 		
 		ArrayList<String> templist= new ArrayList<String>();
 		for (String s : sixqueue){
@@ -246,6 +250,11 @@ public class Frame1 {
 			lblWbtxt.setText("");
 		
 		lblStalltxt.setText(" "+putstallnumb+"");
+		
+		if (checkingstall==putstallnumb){
+			lblStallReasontxt.setText("");
+		}
+		
 		/*System.out.println(putstallnumb);*/
 	}
 	
@@ -262,25 +271,48 @@ public class Frame1 {
             }
             sixqueue.remove();
             
+            StallReason.add("RAW");
             putstallnumb++;
+            String Temp=StallReason.get(StallReason.size()-1);
+            lblStallReasontxt.setText(Temp);
 /*            lblStallReasontxt.setText("RAW");
 */    }
 	
+	public void putjumpstall(){
+		ArrayList<String> array = new ArrayList<String>();
+        while(!sixqueue.isEmpty()){
+        	array.add(sixqueue.remove());
+        }
+        int temp=array.size();
+        array.add(temp, "");
+
+        for(int i=0;i<array.size();i++){
+        	sixqueue.add(array.get(i));
+        }
+        sixqueue.remove();  
+        putstallnumb++;
+        StallReason.add("CONTROL STALL");
+        String Temp=StallReason.get(StallReason.size()-1);
+        lblStallReasontxt.setText(Temp);
+           
+   }      
+		
 	
 	public void checkthestall(String instruction,String bitcode){
+		String array[]=instruction.split(" ");
 		if(bitcode.charAt(3)=='1'){
 			String imm = bitcode.substring(12,16);
 			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
 			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
-			regflags.set(r1-1, 1);
-			if(regflags.get(r2-1)==1)
-			{
+			if(array[0].compareTo("JMP")==0){
+				removeprev();
+			}
+			else if(regflags.get(r2-1)==1)
+			{	
+				regflags.set(r1-1, 1);
 				checkregflags.add(r2-1);
 			}
-		}else{
-			
-			String array[]=instruction.split(" ");
-			
+		}else{			
 			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
 			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
 			int r3 = Integer.parseInt(bitcode.substring(12,16),2);
@@ -302,15 +334,7 @@ public class Frame1 {
 				}
 			}
 			else if(array[0].compareTo("JMP")==0){
-				/*int l1 ;
-				String ls1 = bitcode.substring(4,12);
-				if(bitcode.charAt(4)=='1'){
-					l1 = Integer.parseInt(ls1,2)-16;
-				}
-				else{												
-					l1 = Integer.parseInt(ls1,2);
-				}
-				output = opcode + " " + l1;*/
+				removeprev();
 			}
 			else if(array[0].compareTo("BEQZ")==0){
 				if(regflags.get(r1-1)==1)
@@ -332,6 +356,20 @@ public class Frame1 {
 				}
 			}		
 		}	
+	}
+	
+	
+	public void removeprev(){
+		 ArrayList<String> array = new ArrayList<String>();
+         while(!sixqueue.isEmpty()){
+         	array.add(sixqueue.remove());
+         }
+         int temp=array.size();
+         array.set(temp-1, "");
+         for(int i=0;i<array.size();i++){
+         	sixqueue.add(array.get(i));
+         }
+         JumpFlag=1;
 	}
 	
 	
@@ -455,6 +493,18 @@ public class Frame1 {
 			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
 			datacache.set(r1-1, registers.get(r2-1));
 			output="STORE R"+r2+" <--- "+datacache.get(registers.get(r1-1));
+		}else if(array[0].equals("JMP")){
+			JumpFlag=0;
+			int l1 ;
+			String ls1 = bitcode.substring(4,12);
+			if(bitcode.charAt(4)=='1'){
+				l1 = Integer.parseInt(ls1,2)-16;
+			}
+			else{												
+				l1 = Integer.parseInt(ls1,2);
+			}
+			varpc=varpc-2+l1;
+			output=instruction;
 		}else{
 			output =instruction;
 		}
