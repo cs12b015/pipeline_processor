@@ -34,14 +34,19 @@ public class Frame1 {
 	private JLabel lblIftxt;
 	private JLabel lblIdtxt;
 	private JLabel lblRdtxt;
+	private JLabel lblCyclestxt;
 	private JLabel lblAlutxt;
 	private JLabel lblMemtxt;
 	private JLabel lblWbtxt;
 	private JLabel lblCpitxt;
 	private JLabel lblStalltxt;
 	private JLabel lblStallReasontxt;
+	private Integer putstallnumb;
+	private Integer cyclecount;
 	private ArrayList<Integer> registers =new ArrayList<Integer>();
 	private ArrayList<Integer> datacache =new ArrayList<Integer>();
+	private ArrayList<Integer> regflags =new ArrayList<Integer>();
+	private ArrayList<Integer> checkregflags = new ArrayList<Integer>();
 	private ArrayList<String> instructioncache;
 	private Queue<String> sixqueue;
 	private String content = "";
@@ -88,7 +93,7 @@ public class Frame1 {
 	 */
 	public Frame1() throws IOException {
 		
-		BufferedReader br = new BufferedReader(new FileReader("testCases/test1.b"));		
+		BufferedReader br = new BufferedReader(new FileReader("testCases/test2.b"));		
         String line =  null;
 		while((line=br.readLine())!=null){
 		    content=content+"\n"+line;
@@ -101,23 +106,56 @@ public class Frame1 {
 		for(int i=0;i<256;i++){
 			datacache.add(i,1);
 		}
+		for(int i=0;i<16;i++){
+			regflags.add(i,0);
+		}
+		putstallnumb=0;
+		cyclecount=0;
 		initialize();
 	}
 	
 	private void mynextfunc(){
-		sixqueue.remove();
-		if(varpc < instructioncache.size()){
-			sixqueue.add(instructioncache.get(varpc));
-			varpc++;
+		/*cyclecount++;
+		lblCyclestxt.setText(" "+cyclecount);*/
+		
+		for(int i=0;i<checkregflags.size();i++){
+			if(regflags.get(checkregflags.get(i)).equals(0)){
+				/*System.out.println(regflags.get(checkregflags.get(i))+"----------"+i+"------------0");*/
+				checkregflags.remove(i);
+				i--;
+			}
 		}
+		/*System.out.println(checkregflags);*/
+		/*System.out.println(sixqueue);*/
+		
+		if(!checkregflags.isEmpty()){
+			
+			PutStall(3);
+		}
+		else{
+			sixqueue.remove();
+			if(varpc < instructioncache.size()){
+				sixqueue.add(instructioncache.get(varpc));
+				varpc++;
+			}
+		}		
+		
+		/*System.out.println(sixqueue);*/
+		
 		ArrayList<String> templist= new ArrayList<String>();
 		for (String s : sixqueue){
 			templist.add(s);
 		}
+		
+		
 		if(templist.size()==0){
 			btnNext.setEnabled(false);
 			btnQuit.setEnabled(true);
+		}else{
+			cyclecount++;
+			lblCyclestxt.setText(" "+cyclecount);
 		}
+		
 		
 		
 		if(templist.size()>5){
@@ -129,11 +167,15 @@ public class Frame1 {
 		}
 		else
 			lblIftxt.setText("");
+		
+		
+		
 		if(templist.size()>4){	
 			if(!templist.get(4).trim().equals("")){
 				decode idinst = new decode(templist.get(4));
 				String temp =idinst.getResult();
 				lblIdtxt.setText(temp);
+				checkthestall(temp,templist.get(4));
 			}
 			else{
 				lblIdtxt.setText("");
@@ -141,6 +183,9 @@ public class Frame1 {
 		}
 		else
 			lblIdtxt.setText("");
+		
+		
+		
 		
 		if(templist.size()>3){	
 			if(!templist.get(3).trim().equals("")){
@@ -193,11 +238,108 @@ public class Frame1 {
 		}
 		else
 			lblWbtxt.setText("");
+		
+		lblStalltxt.setText(" "+putstallnumb+"");
+		/*System.out.println(putstallnumb);*/
 	}
 	
+	public void PutStall(int num) {
+		num=num+1;
+        ArrayList<String> array = new ArrayList<String>();
+            while(!sixqueue.isEmpty()){
+            	array.add(sixqueue.remove());
+            }
+            int temp=array.size();
+            array.add(num, "");
+            for(int i=0;i<array.size();i++){
+            	sixqueue.add(array.get(i));
+            }
+            sixqueue.remove();
+            
+            putstallnumb++;
+/*            lblStallReasontxt.setText("RAW");
+*/    }
 	
 	
-	
+	public void checkthestall(String instruction,String bitcode){
+		if(bitcode.charAt(3)=='1'){
+			String imm = bitcode.substring(12,16);
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			regflags.set(r1-1, 1);
+			if(regflags.get(r2-1)==1)
+			{
+				checkregflags.add(r2-1);
+			}
+		}else{
+			
+			String array[]=instruction.split(" ");
+			
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			int r3 = Integer.parseInt(bitcode.substring(12,16),2);
+			if(array[0].compareTo("LD")==0){
+				regflags.set(r1-1, 1);
+				if(regflags.get(r2-1)==1)
+				{
+					checkregflags.add(r2-1);
+				}
+			}
+			else if(array[0].compareTo("SD")==0){
+				if(regflags.get(r1-1)==1)
+				{
+					checkregflags.add(r1-1);
+				}
+				if(regflags.get(r2-1)==1)
+				{
+					checkregflags.add(r2-1);
+				}
+			}
+			else if(array[0].compareTo("JMP")==0){
+				/*int l1 ;
+				String ls1 = bitcode.substring(4,12);
+				if(bitcode.charAt(4)=='1'){
+					l1 = Integer.parseInt(ls1,2)-16;
+				}
+				else{												
+					l1 = Integer.parseInt(ls1,2);
+				}
+				output = opcode + " " + l1;*/
+			}
+			else if(array[0].compareTo("BEQZ")==0){
+				if(regflags.get(r1-1)==1)
+				{
+					checkregflags.add(r1-1);
+				}
+			}
+			else if(array[0].compareTo("HLT")==0){
+			}
+			else {
+				regflags.set(r1-1, 1);
+				if(regflags.get(r2-1)==1)
+				{
+					checkregflags.add(r2-1);
+				}
+				if(regflags.get(r3-1)==1)
+				{
+					checkregflags.add(r3-1);
+				}
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+		}
+		
+		
+		
+		
+		
+	}
 	
 	
 	public String wbregister(String instruction, String bitcode){
@@ -219,13 +361,15 @@ public class Frame1 {
 				}
 				int temp=registers.get(r2-1)+immedia;
 				output ="WB : R"+r1+" <-----"+temp;
-				registers.add(r1-1, temp);
+				regflags.set(r1-1, 0);
+				registers.set(r1-1, temp);
 				regmap.get(r1).setText(""+temp);
 			}else{
 				int r3 = Integer.parseInt(bitcode.substring(12,16),2);
 				int temp=registers.get(r2-1)+registers.get(r3-1);
 				output ="WB : R"+r1+" <-----"+temp;
-				registers.add(r1-1, temp);
+				regflags.set(r1-1, 0);
+				registers.set(r1-1, temp);
 				regmap.get(r1).setText(""+temp);
 			}		
 		}else if(array[0].equals("SUB")){
@@ -242,13 +386,15 @@ public class Frame1 {
 				}
 				int temp=registers.get(r2-1)-immedia;
 				output ="WB : R"+r1+" <-----"+temp;
-				registers.add(r1, temp);
+				regflags.set(r1-1, 0);
+				registers.set(r1, temp);
 				regmap.get(r1).setText(""+temp);
 			}else{
 				int r3 = Integer.parseInt(bitcode.substring(12,16),2);
 				int temp=registers.get(r2-1)-registers.get(r3-1);
+				regflags.set(r1-1, 0);
 				output ="WB : R"+r1+" <-----"+temp;
-				registers.add(r1-1, temp);
+				registers.set(r1-1, temp);
 				regmap.get(r1).setText(""+temp);
 			}
 			
@@ -266,13 +412,15 @@ public class Frame1 {
 				}
 				int temp=registers.get(r2-1)*immedia;
 				output ="WB : R"+r1+" <-----"+temp;
-				registers.add(r1-1, temp);
+				regflags.set(r1-1, 0);
+				registers.set(r1-1, temp);
 				regmap.get(r1).setText(""+temp);
 			}else{
 				int r3 = Integer.parseInt(bitcode.substring(12,16),2);
 				int temp=registers.get(r2-1)*registers.get(r3-1);
 				output ="WB : R"+r1+" <-----"+temp;
-				registers.add(r1-1, temp);
+				regflags.set(r1-1, 0);
+				registers.set(r1-1, temp);
 				regmap.get(r1).setText(""+temp);
 			}
 			
@@ -281,6 +429,8 @@ public class Frame1 {
 		}else if(array[0].equals("JMP")){
 			output=instruction;
 		}else if(array[0].equals("LD")){
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			regflags.set(r1-1, 0);
 			output="WB <-- LOAD";
 		}else if(array[0].equals("SD")){
 			output="WB <-- STORE";
@@ -304,12 +454,14 @@ public class Frame1 {
 		if(array[0].equals("LD")){
 			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
 			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
-			output="LOAD R"+r1+" <--- "+datacache.get(registers.get(r2));
+			registers.set(r1-1, datacache.get(registers.get(r2-1)));
+			output="LOAD R"+r1+" <--- "+datacache.get(registers.get(r2-1));
 			
 		}else if(array[0].equals("SD")){
 			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
 			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
-			output="STORE R"+r2+" <--- "+datacache.get(registers.get(r1));
+			datacache.set(r1-1, registers.get(r2-1));
+			output="STORE R"+r2+" <--- "+datacache.get(registers.get(r1-1));
 		}else{
 			output =instruction;
 		}
@@ -457,13 +609,13 @@ public class Frame1 {
 				output = "JMP" + " " + l1;
 			}
 			else if(ss.compareTo(s6)==0){
-				output = "READ R"+r1+" ==> "+registers.get(r2-1);
+				output = "READ R"+r1+" ==> "+registers.get(r1-1);
 			}
 			else if(ss.compareTo(s7)==0){
 				output = "HLT" ;
 			}
 			else {
-				output="READ R"+ r2+" ==> "+registers.get(r2-1) +" AND "+"R" + r3+" ==> "+registers.get(r2-1);
+				output="READ R"+ r2+" ==> "+registers.get(r2-1) +" AND "+"R" + r3+" ==> "+registers.get(r3-1);
 			}
 	 	}
 		return output;
@@ -617,24 +769,34 @@ public class Frame1 {
 		lblCpitxt.setBounds(170, 325, 120, 25);
 		frame.getContentPane().add(lblCpitxt);
 		
+		JLabel lblCycles= new JLabel("CYCLES");
+		lblCycles.setBounds(40, 360, 160, 25);
+		frame.getContentPane().add(lblCycles);
+		
+		lblCyclestxt = new JLabel("");
+		lblCyclestxt.setOpaque(true);
+		lblCyclestxt.setBackground(Color.white);
+		lblCyclestxt.setBounds(170, 355, 120, 25);
+		frame.getContentPane().add(lblCyclestxt);
+		
 		JLabel lblStall= new JLabel("NUM OF STALLS");
-		lblStall.setBounds(40, 360, 160, 25);
+		lblStall.setBounds(40, 390, 160, 25);
 		frame.getContentPane().add(lblStall);
 		
 		lblStalltxt = new JLabel("");
 		lblStalltxt.setOpaque(true);
 		lblStalltxt.setBackground(Color.white);
-		lblStalltxt.setBounds(170, 355, 120, 25);
+		lblStalltxt.setBounds(170, 385, 120, 25);
 		frame.getContentPane().add(lblStalltxt);
 		
 		JLabel lblStallReason= new JLabel("STALL REASON");
-		lblStallReason.setBounds(40, 390, 160, 25);
+		lblStallReason.setBounds(40, 420, 160, 25);
 		frame.getContentPane().add(lblStallReason);
 		
 		lblStallReasontxt = new JLabel("");
 		lblStallReasontxt.setOpaque(true);
 		lblStallReasontxt.setBackground(Color.white);
-		lblStallReasontxt.setBounds(170, 385, 120, 25);
+		lblStallReasontxt.setBounds(170, 415, 120, 25);
 		frame.getContentPane().add(lblStallReasontxt);
 		
 		JLabel lblR_1 = new JLabel("R1");
