@@ -47,6 +47,7 @@ public class Frame1 {
 	private ArrayList<Integer> datacache =new ArrayList<Integer>();
 	private ArrayList<Integer> regflags =new ArrayList<Integer>();
 	private ArrayList<Integer> checkregflags = new ArrayList<Integer>();
+	private Integer InstructionCount;
 	private ArrayList<String> instructioncache;
 	private Queue<String> sixqueue;
 	private String content = "";
@@ -93,13 +94,16 @@ public class Frame1 {
 	 */
 	public Frame1() throws IOException {
 		
+		InstructionCount=0;
 		BufferedReader br = new BufferedReader(new FileReader("testCases/test2.b"));		
         String line =  null;
 		while((line=br.readLine())!=null){
 		    content=content+"\n"+line;
+		    InstructionCount++;
 		}
 		br.close();
 		content=content.trim();
+		
 		for(int i=0;i<16;i++){
 			registers.add(i,0);
 		}
@@ -151,6 +155,8 @@ public class Frame1 {
 		if(templist.size()==0){
 			btnNext.setEnabled(false);
 			btnQuit.setEnabled(true);
+			float temp = (float)cyclecount/InstructionCount;
+			lblCpitxt.setText(" "+temp);
 		}else{
 			cyclecount++;
 			lblCyclestxt.setText(" "+cyclecount);
@@ -324,21 +330,8 @@ public class Frame1 {
 				{
 					checkregflags.add(r3-1);
 				}
-			}
-			
-			
-			
-			
-			
-			
-			
-			
-		}
-		
-		
-		
-		
-		
+			}		
+		}	
 	}
 	
 	
