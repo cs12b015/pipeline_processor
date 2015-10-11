@@ -65,6 +65,17 @@ public class decode {
 				}
 				output = opcode + " " + l1;
 			}
+			else if(opcode.compareTo("BEQZ")==0){
+				int l1 ;
+				String ls1 = src.substring(8,16);
+				if(src.charAt(8)=='1'){
+					l1 = Integer.parseInt(ls1,2)-16;
+				}
+				else{												
+					l1 = Integer.parseInt(ls1,2);
+				}
+				output = opcode + " [R"+r1+"]"+" " + l1;
+			}
 			else{
 				if(src.charAt(12)=='1'){
 					immedia = Integer.parseInt(imm,2)-16;
@@ -105,7 +116,7 @@ public class decode {
 				else{												
 					l1 = Integer.parseInt(ls1,2);
 				}
-				output = opcode + "[R "+r1+"]"+" " + l1;
+				output = opcode + " [R"+r1+"]"+" " + l1;
 			}
 			else if(opcode.compareTo("HLT")==0){
 				output = opcode ;

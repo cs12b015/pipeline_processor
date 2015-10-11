@@ -44,6 +44,8 @@ public class Frame1 {
 	private Integer putstallnumb;
 	private Integer cyclecount;
 	private Integer JumpFlag=0;
+	private Integer BeqzFlag=0;
+	private Integer TempBeqzFlag=0;
 	private ArrayList<Integer> registers =new ArrayList<Integer>();
 	private ArrayList<Integer> datacache =new ArrayList<Integer>();
 	private ArrayList<Integer> regflags =new ArrayList<Integer>();
@@ -98,7 +100,7 @@ public class Frame1 {
 	public Frame1() throws IOException {
 		
 		InstructionCount=0;
-		BufferedReader br = new BufferedReader(new FileReader("testCases/test4.b"));		
+		BufferedReader br = new BufferedReader(new FileReader("testCases/test2.b"));		
         String line =  null;
 		while((line=br.readLine())!=null){
 		    content=content+"\n"+line;
@@ -134,8 +136,21 @@ public class Frame1 {
 		}
 		
 		
+		
 		if(JumpFlag==1){
 			putjumpstall();
+		}
+		else if(BeqzFlag==1){
+		
+			if(!checkregflags.isEmpty()){			
+				PutStall(3);
+			}else{
+				if(TempBeqzFlag==1){
+					removeprev();
+					TempBeqzFlag=0;
+				}
+				putjumpstall();
+			}
 		}
 		else{
 			if(!checkregflags.isEmpty()){			
@@ -307,6 +322,14 @@ public class Frame1 {
 			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
 			if(array[0].compareTo("JMP")==0){
 				removeprev();
+		         JumpFlag=1;    
+			}else if(array[0].compareTo("BEQZ")==0){
+				BeqzFlag=1;
+				TempBeqzFlag=1;
+				if(regflags.get(r1)==1)
+				{
+					checkregflags.add(r1);
+				}
 			}
 			else if(regflags.get(r2)==1)
 			{	
@@ -337,8 +360,11 @@ public class Frame1 {
 			}
 			else if(array[0].compareTo("JMP")==0){
 				removeprev();
+		         JumpFlag=1;
 			}
 			else if(array[0].compareTo("BEQZ")==0){
+				BeqzFlag=1;
+				TempBeqzFlag=1;
 				if(regflags.get(r1)==1)
 				{
 					checkregflags.add(r1);
@@ -373,7 +399,6 @@ public class Frame1 {
          for(int i=0;i<array.size();i++){
          	sixqueue.add(array.get(i));
          }
-         JumpFlag=1;
 	}
 	
 	
@@ -465,9 +490,15 @@ public class Frame1 {
 			output=instruction;
 		}else if(array[0].equals("LD")){
 			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			registers.set(r1, datacache.get(registers.get(r2)));
+			regmap.get(r1).setText(""+registers.get(r1));
 			regflags.set(r1, 0);
 			output="WB <-- LOAD";
 		}else if(array[0].equals("SD")){
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
+			datacache.set(r1, registers.get(r2));
 			output="WB <-- STORE";
 		}else{
 			output=instruction;
@@ -489,14 +520,11 @@ public class Frame1 {
 		if(array[0].equals("LD")){
 			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
 			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
-			registers.set(r1, datacache.get(registers.get(r2)));
-			regmap.get(r1).setText(""+registers.get(r1));
 			output="LOAD R"+r1+" <--- "+datacache.get(registers.get(r2));
 			
 		}else if(array[0].equals("SD")){
 			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
 			int r2 = Integer.parseInt(bitcode.substring(8,12),2);
-			datacache.set(r1, registers.get(r2));
 			output="STORE R"+r2+" <--- "+datacache.get(registers.get(r1));
 		}else if(array[0].equals("JMP")){
 			JumpFlag=0;
@@ -509,6 +537,26 @@ public class Frame1 {
 				l1 = Integer.parseInt(ls1,2);
 			}
 			varpc=varpc-2+l1;
+			output=instruction;
+		}else if(array[0].equals("BEQZ")){
+			BeqzFlag=0;
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
+			int l1 ;
+			String ls1 = bitcode.substring(8,16);
+			if(bitcode.charAt(8)=='1'){
+				l1 = Integer.parseInt(ls1,2)-16;
+			}
+			else{												
+				l1 = Integer.parseInt(ls1,2);
+			}
+			
+			if(registers.get(r1)==0){
+				varpc=varpc-2+l1;
+			}else{
+				varpc=varpc-1;
+			}
+			
+			
 			output=instruction;
 		}else{
 			output =instruction;
@@ -587,6 +635,7 @@ public class Frame1 {
 			
 		}else if(array[0].equals("BEQZ")){
 			int l1 ;
+			int r1 = Integer.parseInt(bitcode.substring(4,8),2);
 			String ls1 = bitcode.substring(8,16);
 			if(bitcode.charAt(8)=='1'){
 				l1 = Integer.parseInt(ls1,2)-16;
@@ -594,8 +643,8 @@ public class Frame1 {
 			else{												
 				l1 = Integer.parseInt(ls1,2);
 			}
-			int temp=l1+varpc-3;
-			output = "AlUOUT <--"+temp;
+			
+			output = "AlUOUT BEQZ<--"+registers.get(r1);
 		}else if(array[0].equals("JMP")){
 			int l1 ;
 			String ls1 = bitcode.substring(4,12);
@@ -678,7 +727,6 @@ public class Frame1 {
 		for(int i =0;i<arr.length;i++){
 			instructioncache.add(arr[i]);
 		}
-		/*System.out.println(queue);*/
 		btnStart.setEnabled(false);
 		btnNext.setEnabled(true);
 		mynextfunc();
