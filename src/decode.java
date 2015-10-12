@@ -58,7 +58,7 @@ public class decode {
 				int l1 ;
 				String ls1 = src.substring(4,12);
 				if(src.charAt(4)=='1'){
-					l1 = Integer.parseInt(ls1,2)-16;
+					l1 = Integer.parseInt(ls1,2)-256;
 				}
 				else{												
 					l1 = Integer.parseInt(ls1,2);
@@ -69,7 +69,7 @@ public class decode {
 				int l1 ;
 				String ls1 = src.substring(8,16);
 				if(src.charAt(8)=='1'){
-					l1 = Integer.parseInt(ls1,2)-16;
+					l1 = Integer.parseInt(ls1,2)-256;
 				}
 				else{												
 					l1 = Integer.parseInt(ls1,2);
@@ -100,7 +100,7 @@ public class decode {
 				int l1 ;
 				String ls1 = src.substring(4,12);
 				if(src.charAt(4)=='1'){
-					l1 = Integer.parseInt(ls1,2)-16;
+					l1 = Integer.parseInt(ls1,2)-256;
 				}
 				else{												
 					l1 = Integer.parseInt(ls1,2);
@@ -111,7 +111,7 @@ public class decode {
 				int l1 ;
 				String ls1 = src.substring(8,16);
 				if(src.charAt(8)=='1'){
-					l1 = Integer.parseInt(ls1,2)-16;
+					l1 = Integer.parseInt(ls1,2)-256;
 				}
 				else{												
 					l1 = Integer.parseInt(ls1,2);
